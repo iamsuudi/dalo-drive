@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
 	HandHelping,
+	LogIn,
 	Menu,
 	ShoppingCart,
 	Store,
@@ -16,7 +17,7 @@ import {
 
 function NavBar() {
 	return (
-		<header className="flex justify-between items-center px-10 py-5">
+		<header className="flex justify-between items-center px-10 py-6 max-w-screen-xl mx-auto w-full">
 			<p className="font-bold text-xl">Dalo Drive</p>
 
 			<ul className="lg:flex hidden text-sm gap-5">
@@ -27,8 +28,8 @@ function NavBar() {
 			</ul>
 
 			<div className="lg:flex hidden gap-5">
-				<Button variant={"ghost"}>Sign In</Button>
-				<Button>Sign Out</Button>
+				<Button variant={"ghost"} className="border" >Sign In</Button>
+				<Button>Sign Up</Button>
 			</div>
 
 			<DropdownMenu>
@@ -50,10 +51,14 @@ function NavBar() {
 						<Waypoints className="mr-2 h-4 w-4" />
 						<span>Resources</span>
 					</DropdownMenuItem>
-					<DropdownMenuSeparator />
 					<DropdownMenuItem>
 						<HandHelping className="mr-2 h-4 w-4" />
 						<span>Support</span>
+					</DropdownMenuItem>
+					<DropdownMenuSeparator />
+                    <DropdownMenuItem>
+						<LogIn className="mr-2 h-4 w-4" />
+						<span>Sign Up</span>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
