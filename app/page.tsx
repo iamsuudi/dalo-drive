@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { DatabaseBackup, ShieldCheck, Usb } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
 	return (
 		<main className="flex flex-col items-center p-5 gap-7 w-full py-20">
-			<h1 className="sm:text-6xl text-3xl font-bold flex flex-col text-center gap-3">
-				Revolutionize Your <span>Cloud Experience</span>
+			<h1 className="sm:text-6xl text-4xl font-bold flex flex-col text-center gap-3">
+				Revolutionize Your <span className="bg-clip-text bg-gradient-to-r text-transparent from-purple-700 via-cyan-600 to-rose-700">Cloud Experience</span>
 			</h1>
 			<p className="max-w-xl text-center">
 				Unlock instant, secure and seamless cloud storage. Upload,
@@ -13,8 +14,12 @@ export default function Home() {
 				to integrate multiple folders.
 			</p>
 			<div className="flex gap-2">
-				<Button className="py-6 px-8">Start Now</Button>
-				<Button variant={"ghost"} className="py-6 px-8 border">Explore More</Button>
+				<Link href={"/dashboard"} className="py-4 px-8 bg-cyan-700 rounded-lg font-bold hover:cursor-pointer">
+					Start Now
+				</Link>
+				<Link href={"/"} className="py-4 px-8 border rounded-lg font-bold hover:cursor-pointer">
+					Explore More
+				</Link>
 			</div>
 
 			<div className="flex p-4 w-screen flex-wrap justify-center gap-5 mt-32">

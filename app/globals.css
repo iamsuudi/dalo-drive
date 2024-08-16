@@ -1,4 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
+
+body {
+	background-image: url("/Rect-Light.svg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	min-height: 100dvh;
+	width: 100vw;
+	overflow-x: hidden;
+	display: flex;
+	flex-direction: column;
+}

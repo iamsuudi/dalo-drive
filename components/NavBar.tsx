@@ -14,11 +14,12 @@ import {
 	Store,
 	Waypoints,
 } from "lucide-react";
+import Link from "next/link";
 
 function NavBar() {
 	return (
 		<header className="flex justify-between items-center px-10 py-6 max-w-screen-xl mx-auto w-full">
-			<p className="font-bold text-xl">Dalo Drive</p>
+			<Link href={"/"} className="font-bold text-xl">Dalo Drive</Link>
 
 			<ul className="lg:flex hidden text-sm gap-5">
 				<li>About</li>

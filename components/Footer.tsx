@@ -1,4 +1,5 @@
 import { GitHubLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 export default function Footer() {
 	return (
@@ -6,11 +7,13 @@ export default function Footer() {
 			<p className="text-xs">@2024 Dalo Drive</p>
 			<ul className="flex gap-3">
 				<li>
-					<GitHubLogoIcon />
+					<Link href={"https://github.com/iamsuudi/dalo-drive"}>
+						<GitHubLogoIcon />
+					</Link>
 				</li>
-                <li>
+				<li>
 					<LinkedInLogoIcon />
-                </li>
+				</li>
 			</ul>
 		</footer>
 	);
