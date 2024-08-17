@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
 	title: "Dalo Drive",
@@ -27,6 +28,7 @@ export default function RootLayout({
 					<NavBar />
 					{children}
 					<Footer />
+					<Toaster className="bg-transparent bg-none backdrop-blur-sm" />
 				</ThemeProvider>
 			</body>
 		</html>
