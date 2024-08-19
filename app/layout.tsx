@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={cn("min-h-screen font-sans antialiased")}>
+			<body className={cn("min-h-screen font-sans antialiased w-screen overflow-x-hidden")}>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="dark"

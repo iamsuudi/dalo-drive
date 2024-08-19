@@ -11,7 +11,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { LoginSchema } from "@/schemas";
+import { RegisterSchema } from "@/schemas";
 import CardWrapper from "../card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,31 +20,34 @@ import { FormSuccess } from "@/components/form-success";
 import { useState, useTransition } from "react";
 import { login } from "@/actions/auth";
 
-export default function LoginForm() {
+export default function RegisterForm() {
 	const [isPending, startTransition] = useTransition();
 	const [error, setError] = useState<string | undefined>("");
+	const [success, setSuccess] = useState<string | undefined>("");
 
-	const form = useForm<z.infer<typeof LoginSchema>>({
-		resolver: zodResolver(LoginSchema),
+	const form = useForm<z.infer<typeof RegisterSchema>>({
+		resolver: zodResolver(RegisterSchema),
 		defaultValues: {
 			email: "",
 			password: "",
+			confirmPassword: "",
 		},
 	});
 
-	const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+	const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
 		startTransition(async () => {
 			login(values).then((data) => {
 				setError(data.error);
+				setSuccess(data.success);
 			});
 		});
 	};
 
 	return (
 		<CardWrapper
-			headerLabel="Welcome back"
-			backButtonLabel="Don't have an account?"
-			backButtonHref="/auth/register"
+			headerLabel="Create an account"
+			backButtonLabel="Already have an account?"
+			backButtonHref="/auth/login"
 			showSocial>
 			<Form {...form}>
 				<form
@@ -87,14 +90,32 @@ export default function LoginForm() {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name={"confirmPassword"}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Confirm Password</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder="suudi@gmail.com"
+											type="password"
+											disabled={isPending}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 					{error && <FormError message={error} />}
-					{/* <FormSuccess message="Invalid credentials!" /> */}
+					{success && <FormSuccess message={success} />}
 					<Button
 						type="submit"
 						disabled={isPending}
 						className="w-full">
-						Login
+						Register
 					</Button>
 				</form>
 			</Form>
