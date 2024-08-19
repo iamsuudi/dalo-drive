@@ -35,7 +35,7 @@ export default function LoginForm() {
 	const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
 		startTransition(async () => {
 			login(values).then((data) => {
-				setError(data.error);
+				setError(data?.error || "");
 			});
 		});
 	};
@@ -78,7 +78,7 @@ export default function LoginForm() {
 									<FormControl>
 										<Input
 											{...field}
-											placeholder="suudi@gmail.com"
+											placeholder="**********"
 											type="password"
 											disabled={isPending}
 										/>

@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useState, useTransition } from "react";
-import { login } from "@/actions/auth";
+import { register } from "@/actions/auth";
 
 export default function RegisterForm() {
 	const [isPending, startTransition] = useTransition();
@@ -36,7 +36,7 @@ export default function RegisterForm() {
 
 	const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
 		startTransition(async () => {
-			login(values).then((data) => {
+			register(values).then((data) => {
 				setError(data.error);
 				setSuccess(data.success);
 			});
@@ -81,7 +81,7 @@ export default function RegisterForm() {
 									<FormControl>
 										<Input
 											{...field}
-											placeholder="suudi@gmail.com"
+											placeholder="**********"
 											type="password"
 											disabled={isPending}
 										/>
@@ -99,7 +99,7 @@ export default function RegisterForm() {
 									<FormControl>
 										<Input
 											{...field}
-											placeholder="suudi@gmail.com"
+											placeholder="**********"
 											type="password"
 											disabled={isPending}
 										/>

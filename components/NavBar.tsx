@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -15,11 +16,16 @@ import {
 	Waypoints,
 } from "lucide-react";
 import Link from "next/link";
+import SignoutWrapper from "./signout-wrapper";
 
-function NavBar() {
+async function NavBar() {
+	const session = await auth();
+
 	return (
 		<header className="flex justify-between items-center px-10 py-6 max-w-screen-xl mx-auto w-full">
-			<Link href={"/"} className="font-bold text-xl">Dalo Drive</Link>
+			<Link href={"/"} className="font-bold text-xl">
+				Dalo Drive
+			</Link>
 
 			<ul className="lg:flex hidden text-sm gap-5">
 				<li>About</li>
@@ -29,8 +35,23 @@ function NavBar() {
 			</ul>
 
 			<div className="lg:flex hidden gap-5">
-				<Button variant={"ghost"} className="border" >Sign In</Button>
-				<Button>Sign Up</Button>
+				{!session && (
+					<Link href={"/auth/login"}>
+						<Button variant={"ghost"} className="border">
+							Sign In
+						</Button>
+					</Link>
+				)}
+				{!session && (
+					<Link href={"/auth/register"}>
+						<Button>Sign Up</Button>
+					</Link>
+				)}
+				{session && (
+					<SignoutWrapper>
+						<Button>Log Out</Button>
+					</SignoutWrapper>
+				)}
 			</div>
 
 			<DropdownMenu>
@@ -57,9 +78,11 @@ function NavBar() {
 						<span>Support</span>
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
-                    <DropdownMenuItem>
-						<LogIn className="mr-2 h-4 w-4" />
-						<span>Sign Up</span>
+					<DropdownMenuItem>
+						<SignoutWrapper>
+							<LogIn className="mr-2 h-4 w-4" />
+							<button>Sign Up</button>
+						</SignoutWrapper>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
