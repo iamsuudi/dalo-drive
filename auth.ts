@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import authConfig from "@/auth.config";
 import { prisma } from "@/lib/db";
-import { getUserById } from "./data/user";
+import { getUserById } from "@/data/user";
 import { UserRole } from "@prisma/client";
 
 export const {
@@ -12,6 +12,14 @@ export const {
 	signIn,
 	signOut,
 } = NextAuth({
+	events: {
+		async linkAccount({ user }) {
+			await prisma.user.update({
+				where: { id: user.id },
+				data: { emailVerified: new Date() },
+			});
+		},
+	},
 	callbacks: {
 		async session({ session, token }) {
 			if (session?.user && token?.role) {

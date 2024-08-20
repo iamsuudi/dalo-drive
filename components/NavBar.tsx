@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import SignoutWrapper from "./signout-wrapper";
+import Image from "next/image";
 
 async function NavBar() {
 	const session = await auth();
@@ -57,7 +58,11 @@ async function NavBar() {
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild className="outline-none lg:hidden">
 					<button>
-						<Menu />
+						{session ? (
+							<Image src={session.user?.image || ""} alt="" width={32} height={32} className="rounded-full bg-slate-300" />
+						) : (
+							<Menu />
+						)}
 					</button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className="w-56 mr-10">
@@ -79,10 +84,17 @@ async function NavBar() {
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem>
-						<SignoutWrapper>
-							<LogIn className="mr-2 h-4 w-4" />
-							<button>Sign Up</button>
-						</SignoutWrapper>
+						{session ? (
+							<SignoutWrapper>
+								<LogIn className="mr-2 h-4 w-4" />
+								<button>Sign Out</button>
+							</SignoutWrapper>
+						) : (
+							<Link href={"/auth/login"} className="flex">
+								<LogIn className="mr-2 h-4 w-4" />
+								<button>Sign In</button>
+							</Link>
+						)}
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
