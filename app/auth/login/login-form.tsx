@@ -16,11 +16,17 @@ import CardWrapper from "../card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
 import { useState, useTransition } from "react";
 import { login } from "@/actions/auth";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
+	const searchParams = useSearchParams();
+	const urlError =
+		searchParams.get("error") === "OAuthAccountNotLinked"
+			? "Email already in use with different provider"
+			: "";
+
 	const [isPending, startTransition] = useTransition();
 	const [error, setError] = useState<string | undefined>("");
 
@@ -88,8 +94,9 @@ export default function LoginForm() {
 							)}
 						/>
 					</div>
-					{error && <FormError message={error} />}
-					{/* <FormSuccess message="Invalid credentials!" /> */}
+
+					<FormError message={error || urlError} />
+					
 					<Button
 						type="submit"
 						disabled={isPending}

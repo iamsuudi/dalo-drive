@@ -26,7 +26,7 @@ export default function Social() {
 				size={"lg"}
 				variant={"outline"}
 				className="w-full"
-				onClick={() => clickHandler("github")}>
+				onClick={() => clickHandler("google")}>
 				<FcGoogle />
 			</Button>
 		</div>

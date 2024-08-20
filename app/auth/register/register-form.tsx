@@ -109,8 +109,10 @@ export default function RegisterForm() {
 							)}
 						/>
 					</div>
-					{error && <FormError message={error} />}
-					{success && <FormSuccess message={success} />}
+
+					<FormError message={error} />
+					<FormSuccess message={success} />
+					
 					<Button
 						type="submit"
 						disabled={isPending}
