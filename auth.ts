@@ -25,11 +25,23 @@ export const {
 		},
 	},
 	callbacks: {
+		async signIn({ user, account }) {
+			// Allow 0Auth without email verification
+			if (account?.provider !== "credentials") return true;
+
+			const existingUser = await getUserById(user.id as string);
+
+			// Prevent sign in without email verification
+			if (!existingUser?.emailVerified) return false;
+
+			// TODO: Add 2FFA check
+			return true;
+		},
 		async session({ session, token }) {
 			if (session?.user && token?.role) {
 				session.user.role = token.role as UserRole;
+				session.user.id = token.sub as string;
 			}
-			console.log({ session, token });
 
 			return session;
 		},

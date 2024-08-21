@@ -19,16 +19,19 @@ import { FormError } from "@/components/form-error";
 import { useState, useTransition } from "react";
 import { login } from "@/actions/auth";
 import { useSearchParams } from "next/navigation";
+import { FormSuccess } from "@/components/form-success";
 
 export default function LoginForm() {
 	const searchParams = useSearchParams();
 	const urlError =
-		searchParams.get("error") === "OAuthAccountNotLinked"
+		searchParams.get("error") === "OAuthAccountNotLinked" ||
+		searchParams.get("error") === "Configuration"
 			? "Email already in use with different provider"
 			: "";
 
 	const [isPending, startTransition] = useTransition();
 	const [error, setError] = useState<string | undefined>("");
+	const [success, setSuccess] = useState<string | undefined>("");
 
 	const form = useForm<z.infer<typeof LoginSchema>>({
 		resolver: zodResolver(LoginSchema),
@@ -42,6 +45,7 @@ export default function LoginForm() {
 		startTransition(async () => {
 			login(values).then((data) => {
 				setError(data?.error || "");
+				setSuccess(data?.success || "");
 			});
 		});
 	};
@@ -96,7 +100,8 @@ export default function LoginForm() {
 					</div>
 
 					<FormError message={error || urlError} />
-					
+					<FormSuccess message={success} />
+
 					<Button
 						type="submit"
 						disabled={isPending}
