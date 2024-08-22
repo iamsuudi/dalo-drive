@@ -24,6 +24,7 @@ import Link from "next/link";
 
 export default function LoginForm() {
 	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get("callbackUrl");
 	const urlError =
 		searchParams.get("error") === "OAuthAccountNotLinked" ||
 		searchParams.get("error") === "Configuration"
@@ -44,7 +45,7 @@ export default function LoginForm() {
 
 	const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
 		startTransition(async () => {
-			login(values).then((data) => {
+			login(values, callbackUrl).then((data) => {
 				setError(data?.error || "");
 				setSuccess(data?.success || "");
 			});
@@ -100,7 +101,11 @@ export default function LoginForm() {
 						/>
 					</div>
 
-					<Button size={"sm"} variant={"link"} asChild className="px-0">
+					<Button
+						size={"sm"}
+						variant={"link"}
+						asChild
+						className="px-0">
 						<Link href={"/auth/reset"}>Forgot password?</Link>
 					</Button>
 
