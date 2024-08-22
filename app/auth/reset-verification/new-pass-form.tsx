@@ -11,75 +11,52 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { LoginSchema } from "@/schemas";
+import { ResetPasswordSchema } from "@/schemas";
 import CardWrapper from "../card-wrapper";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
-import { useState, useTransition } from "react";
-import { login } from "@/actions/auth";
-import { useSearchParams } from "next/navigation";
 import { FormSuccess } from "@/components/form-success";
-import Link from "next/link";
+import { useState, useTransition } from "react";
+import { verifyPasswordReset } from "@/actions/auth";
 
-export default function LoginForm() {
-	const searchParams = useSearchParams();
-	const urlError =
-		searchParams.get("error") === "OAuthAccountNotLinked" ||
-		searchParams.get("error") === "Configuration"
-			? "Email already in use with different provider"
-			: "";
-
+export default function NewPasswordForm({ token }: { token: string }) {
 	const [isPending, startTransition] = useTransition();
 	const [error, setError] = useState<string | undefined>("");
 	const [success, setSuccess] = useState<string | undefined>("");
 
-	const form = useForm<z.infer<typeof LoginSchema>>({
-		resolver: zodResolver(LoginSchema),
+	const form = useForm<z.infer<typeof ResetPasswordSchema>>({
+		resolver: zodResolver(ResetPasswordSchema),
 		defaultValues: {
-			email: "",
 			password: "",
+			confirmPassword: "",
 		},
 	});
 
-	const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-		startTransition(async () => {
-			login(values).then((data) => {
-				setError(data?.error || "");
-				setSuccess(data?.success || "");
-			});
+	const onSubmit = (values: z.infer<typeof ResetPasswordSchema>) => {
+		startTransition(() => {
+			if (!token) {
+				setError("Reset Token missing");
+				return;
+			} else {
+				verifyPasswordReset({ ...values, token }).then((data) => {
+					setError(data.error);
+					setSuccess(data.success);
+				});
+			}
 		});
 	};
 
 	return (
 		<CardWrapper
-			headerLabel="Welcome back"
-			backButtonLabel="Don't have an account?"
-			backButtonHref="/auth/register"
-			showSocial>
+			headerLabel="Reset Yuour password"
+			backButtonLabel="Back to login"
+			backButtonHref="/auth/login">
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
 					className="space-y-6">
 					<div className="space-y-4">
-						<FormField
-							control={form.control}
-							name={"email"}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Email</FormLabel>
-									<FormControl>
-										<Input
-											{...field}
-											placeholder="suudi@gmail.com"
-											type="email"
-											disabled={isPending}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
 						<FormField
 							control={form.control}
 							name={"password"}
@@ -98,20 +75,34 @@ export default function LoginForm() {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name={"confirmPassword"}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Confirm Password</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											placeholder="**********"
+											type="password"
+											disabled={isPending}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 
-					<Button size={"sm"} variant={"link"} asChild className="px-0">
-						<Link href={"/auth/reset"}>Forgot password?</Link>
-					</Button>
-
-					<FormError message={error || urlError} />
+					<FormError message={error} />
 					<FormSuccess message={success} />
 
 					<Button
 						type="submit"
 						disabled={isPending}
 						className="w-full">
-						Login
+						Reset
 					</Button>
 				</form>
 			</Form>

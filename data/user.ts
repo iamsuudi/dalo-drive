@@ -1,3 +1,4 @@
+import bcryptjs from "bcryptjs";
 import { prisma } from "@/lib/db";
 
 export const getUserByEmail = async (email: string) => {
@@ -18,11 +19,24 @@ export const getUserById = async (id: string) => {
 	}
 };
 
-export const UpdateUserById = async (id: string, newEmail: string) => {
+export const verifyUserEmail = async (id: string, newEmail: string) => {
 	try {
 		const user = await prisma.user.update({
 			where: { id },
 			data: { emailVerified: new Date(), email: newEmail },
+		});
+		return user;
+	} catch (error) {
+		return null;
+	}
+};
+
+export const updateUserPassword = async (id: string, newPassword: string) => {
+	try {
+		const hashedPassword = await bcryptjs.hash(newPassword, 10);
+		const user = await prisma.user.update({
+			where: { id },
+			data: { password: hashedPassword },
 		});
 		return user;
 	} catch (error) {

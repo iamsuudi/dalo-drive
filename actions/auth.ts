@@ -1,10 +1,19 @@
 "use server";
 
-import { LoginSchema, RegisterSchema } from "@/schemas";
+import {
+	LoginSchema,
+	RegisterSchema,
+	ResetEmailSchema,
+	ResetPasswordTokenSchema,
+} from "@/schemas";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
-import { getUserByEmail, UpdateUserById } from "@/data/user";
+import {
+	getUserByEmail,
+	updateUserPassword,
+	verifyUserEmail,
+} from "@/data/user";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
@@ -13,7 +22,12 @@ import {
 	generateVerificationToken,
 	getVerificationTokenByToken,
 } from "@/data/verification-token";
-import { sendVerificationEmail } from "@/lib/mail";
+import { sendResetVerification, sendVerificationEmail } from "@/lib/mail";
+import {
+	deleteResetToken,
+	generateResetToken,
+	getResetTokenByToken,
+} from "@/data/reset-token";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
 	const validatedFields = LoginSchema.safeParse(values);
@@ -26,7 +40,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
 	const existingUser = await getUserByEmail(email);
 
-	if (!existingUser?.emailVerified) {
+	if (existingUser && !existingUser.emailVerified) {
 		const newToken = await generateVerificationToken(email);
 
 		if (newToken?.token) await sendVerificationEmail(email, newToken.token);
@@ -88,8 +102,8 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
 export const verifyEmail = async (token: string) => {
 	const existingToken = await getVerificationTokenByToken(token);
-	console.log({existingToken});
-	
+	console.log({ existingToken });
+
 	if (!existingToken) {
 		return { error: "Token doesn't exist!" };
 	}
@@ -106,9 +120,67 @@ export const verifyEmail = async (token: string) => {
 		return { error: "User with this email doesn't exist!" };
 	}
 
-	await UpdateUserById(existingUser.id, existingToken.email);
+	await verifyUserEmail(existingUser.id, existingToken.email);
 
 	// await deleteVerificationToken(existingToken.id);
 
 	return { success: "Email verified!" };
+};
+
+export const reset = async (values: z.infer<typeof ResetEmailSchema>) => {
+	const validatedFields = ResetEmailSchema.safeParse(values);
+
+	if (!validatedFields.success) {
+		return { error: "Invalid email" };
+	}
+
+	const { email } = validatedFields.data;
+
+	const existingUser = await getUserByEmail(email);
+
+	if (!existingUser) return { error: "Unknown email" };
+
+	const resetToken = await generateResetToken(email);
+
+	if (resetToken) await sendResetVerification(email, resetToken.token);
+
+	return { success: "Verification code is sent!" };
+};
+
+export const verifyPasswordReset = async (
+	values: z.infer<typeof ResetPasswordTokenSchema>
+) => {
+	const validatedFields = ResetPasswordTokenSchema.safeParse(values);
+
+	if (!validatedFields.success) return { error: "Invalid fields" };
+
+	const { token, password, confirmPassword } = validatedFields.data;
+
+	const existingToken = await getResetTokenByToken(token);
+
+	if (!existingToken) {
+		return { error: "Token doesn't exist!" };
+	}
+
+	const hasExpired = new Date(existingToken.expires) < new Date();
+
+	if (hasExpired) {
+		return { error: "Token has expired!" };
+	}
+
+	if (password !== confirmPassword) {
+		return { error: "Passwords don't match" };
+	}
+
+	const existingUser = await getUserByEmail(existingToken.email);
+
+	if (!existingUser) {
+		return { error: "User with this email doesn't exist!" };
+	}
+
+	await updateUserPassword(existingUser.id, password);
+
+	// await deleteResetToken(existingToken.id);
+
+	return { success: "Password reser successfull!" };
 };

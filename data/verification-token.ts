@@ -43,7 +43,6 @@ export const generateVerificationToken = async (email: string) => {
 				expires,
 			},
 		});
-		console.log({ verificationToken });
 
 		return verificationToken;
 	} catch (error) {}
