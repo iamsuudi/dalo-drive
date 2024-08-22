@@ -17,7 +17,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import SignoutWrapper from "./signout-wrapper";
-import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { FaUser } from "react-icons/fa";
 
 async function NavBar() {
 	const session = await auth();
@@ -59,7 +60,12 @@ async function NavBar() {
 				<DropdownMenuTrigger asChild className="outline-none lg:hidden">
 					<button>
 						{session ? (
-							<Image src={session.user?.image || ""} alt="" width={32} height={32} className="rounded-full bg-slate-300" />
+							<Avatar>
+								<AvatarImage src={session.user?.image || ""} />
+								<AvatarFallback>
+									<FaUser />
+								</AvatarFallback>
+							</Avatar>
 						) : (
 							<Menu />
 						)}

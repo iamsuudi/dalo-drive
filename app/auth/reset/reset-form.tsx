@@ -78,7 +78,7 @@ export default function ResetForm() {
 						type="submit"
 						disabled={isPending}
 						className="w-full">
-						Register
+						Send Verification
 					</Button>
 				</form>
 			</Form>

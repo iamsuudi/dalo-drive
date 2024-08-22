@@ -62,7 +62,7 @@ export default function NewPasswordForm({ token }: { token: string }) {
 							name={"password"}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Password</FormLabel>
+									<FormLabel>New Password</FormLabel>
 									<FormControl>
 										<Input
 											{...field}
