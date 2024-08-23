@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { useDropzone } from "react-dropzone";
 import clsx from "clsx";
-import { uploadFile } from "@/lib/actions";
+import { uploadFile } from "@/actions/file-upload";
 import { toast } from "sonner";
 
 import {
@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/table";
 import { Button } from "./ui/button";
 import { Trash } from "lucide-react";
+import Image from "next/image";
+import { FormError } from "./form-error";
+import { FormSuccess } from "./form-success";
 
 interface RejectedFileType {
 	file: File;
@@ -24,15 +27,23 @@ interface RejectedFileType {
 }
 
 export default function FileDropZone() {
+	const [isPending, startTransition] = useTransition();
+	const [error, setError] = useState<string | undefined>("");
+	const [success, setSuccess] = useState<string | undefined>("");
+
 	const [files, setAcceptedFiles] = useState<File[]>([]);
 
 	const onDrop = useCallback(
 		async (acceptedFiles: File[], rejectedFiles: RejectedFileType[]) => {
 			// Do something with the files
 
-			setAcceptedFiles((previousFiles) => [
-				...previousFiles,
-				...acceptedFiles.filter((file) => file.type !== ""),
+			setAcceptedFiles([
+				...files,
+				...acceptedFiles.filter(
+					(file) =>
+						file.type !== "" &&
+						!files.map((f) => f.name).includes(file.name)
+				),
 			]);
 
 			acceptedFiles
@@ -62,14 +73,30 @@ export default function FileDropZone() {
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
-		maxSize: 1024 * 2000,
+		maxSize: 2 * 1024 * 1024,
+		maxFiles: 5,
 	});
 
 	const renderSize = (size: number) => {
-		if (size > 1000) {
-			return `${(size / 1000).toFixed(2)} KB`;
+		if (size < 1024) {
+			return `${(size / 1024).toFixed(2)} KB`;
 		}
-		return `${(size / (1000 * 1000)).toFixed(2)} MB`;
+		return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+	};
+
+	const renderPreview = (file: File) => {
+		if (file.type.startsWith("image")) {
+			const url = URL.createObjectURL(file);
+			return url;
+		} else if (file.type.startsWith("video")) {
+			return "/video.png";
+		} else if (file.type.startsWith("text")) {
+			return "/text.png";
+		} else if (file.type === "application/pdf") {
+			return "/pdf.png";
+		} else {
+			return "/file.png";
+		}
 	};
 
 	return (
@@ -83,7 +110,7 @@ export default function FileDropZone() {
 						"bg-white/15": isDragActive,
 					}),
 				})}>
-				<input {...getInputProps()} />
+				<input {...getInputProps()} disabled={isPending} />
 				{isDragActive ? (
 					<p className="text-center">Drop the files here ...</p>
 				) : (
@@ -94,16 +121,14 @@ export default function FileDropZone() {
 				)}
 			</div>
 
-			<div className="relative w-full max-w-2xl h-96 border rounded-lg border-slate-600">
-				<Table className="h-full w-full border-collapse">
+			<div className="relative w-full max-w-2xl min-h-96 flex flex-col border rounded-lg border-slate-600">
+				<Table className="h-full w-ful py-10">
 					<TableCaption></TableCaption>
 					<TableHeader>
 						<TableRow>
+							<TableHead className="min-w-16 text-center"></TableHead>
 							<TableHead className="w-full min-w-60">
 								Name
-							</TableHead>
-							<TableHead className="min-w-32 text-center">
-								Type
 							</TableHead>
 							<TableHead className="min-w-32 text-center">
 								Size
@@ -111,15 +136,22 @@ export default function FileDropZone() {
 							<TableHead className="min-w-10"></TableHead>
 						</TableRow>
 					</TableHeader>
-					<TableBody>
+					<TableBody className="">
 						{files.map((file) => {
 							return (
-								<TableRow key={file.name}>
+								<TableRow
+									key={file.name}
+									className="h-16 border-0">
+									<TableCell className="text-center">
+										<Image
+											src={renderPreview(file)}
+											alt=""
+											width={32}
+											height={32}
+										/>
+									</TableCell>
 									<TableCell className="font-medium">
 										{file.name}
-									</TableCell>
-									<TableCell className="text-center">
-										{file.type.toString()}
 									</TableCell>
 									<TableCell className="text-center">
 										{renderSize(file.size)}
@@ -143,16 +175,28 @@ export default function FileDropZone() {
 					</TableBody>
 				</Table>
 				<Button
-					className="absolute bottom-0 w-full"
-					onClick={async () => {
+					className="w-full mt-auto"
+					disabled={isPending || files.length === 0}
+					onClick={() => {
 						const formData = new FormData();
 						files.forEach((file) => {
 							formData.append("file", file);
 						});
-						await uploadFile(formData);
+						startTransition(() => {
+							uploadFile(formData).then((data) => {
+								setError(data?.error);
+								setSuccess(data?.success);
+								setAcceptedFiles([]);
+							});
+						});
 					}}>
-					Upload
+					{isPending ? "Uploading..." : "Upload"}
 				</Button>
+			</div>
+
+			<div className="w-full justify-center flex flex-col items-center gap-4 max-w-2xl">
+				<FormError message={error} />
+				<FormSuccess message={success} />
 			</div>
 		</section>
 	);

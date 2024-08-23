@@ -23,6 +23,8 @@ model User {
   role          UserRole? @default(USER)
   accounts      Account[]
 
+  files File[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -55,7 +57,7 @@ enum UserRole {
 
 model VerificationToken {
   id      String   @id @default(cuid())
-  email   String   
+  email   String
   token   String
   expires DateTime
 
@@ -64,9 +66,23 @@ model VerificationToken {
 
 model ResetToken {
   id      String   @id @default(cuid())
-  email   String   
+  email   String
   token   String
   expires DateTime
 
   @@unique([email, token])
+}
+
+model File {
+  id   String   @id @default(cuid())
+  url  String
+  name String
+  size String
+  type String
+  path String[] @default([])
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  createdAt DateTime @default(now())
 }

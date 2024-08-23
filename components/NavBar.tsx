@@ -36,7 +36,7 @@ async function NavBar() {
 				<li>Support</li>
 			</ul>
 
-			<div className="lg:flex hidden gap-5">
+			<div className="lg:flex hidden gap-5 items-center">
 				{!session && (
 					<Link href={"/auth/login"}>
 						<Button variant={"ghost"} className="border">
@@ -50,9 +50,17 @@ async function NavBar() {
 					</Link>
 				)}
 				{session && (
-					<SignoutWrapper>
-						<Button>Log Out</Button>
-					</SignoutWrapper>
+					<>
+						<SignoutWrapper>
+							<Button>Log Out</Button>
+						</SignoutWrapper>
+						<Avatar>
+							<AvatarImage src={session.user?.image || ""} />
+							<AvatarFallback>
+								<FaUser />
+							</AvatarFallback>
+						</Avatar>
+					</>
 				)}
 			</div>
 

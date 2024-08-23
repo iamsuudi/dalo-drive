@@ -1,4 +1,5 @@
 "use server";
+
 import path from "path";
 import { existsSync, mkdirSync } from "fs";
 import { writeFile } from "fs/promises";
@@ -22,10 +23,11 @@ export const uploadFile = async (formData: FormData) => {
 			// Write the file to the filesystem
 			await writeFile(filePath, buffer);
 
-			console.log(`File saved successfully!`);
 			console.log(filePath);
+			return { success: `Uploaded successfully!` };
 		} catch (error) {
 			console.error("Error saving file:", error);
+			return { error: `Something went wrong!` };
 		}
 	}
 };
