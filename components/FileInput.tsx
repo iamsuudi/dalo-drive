@@ -68,7 +68,7 @@ export default function FileDropZone() {
 				})
 			);
 		},
-		[]
+		[files]
 	);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -78,7 +78,7 @@ export default function FileDropZone() {
 	});
 
 	const renderSize = (size: number) => {
-		if (size < 1024) {
+		if (size < 102400) {
 			return `${(size / 1024).toFixed(2)} KB`;
 		}
 		return `${(size / (1024 * 1024)).toFixed(2)} MB`;
@@ -115,8 +115,7 @@ export default function FileDropZone() {
 					<p className="text-center">Drop the files here ...</p>
 				) : (
 					<p className="text-center">
-						Drag and drop drop some files here, or click to select
-						files
+						Drag and drop some files here, or click to select files
 					</p>
 				)}
 			</div>
