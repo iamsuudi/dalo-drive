@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DaloChat
+
+File uploader that uploads our files to the server
+
+---
+
+## Tech Stack
+
+-   **Front End:** Next.js | React | TypeScript | TailwindCSS
+-   **Back End:** Next.js | PostgreSQL | Prisma
+-   **Other Libraries:** Shadcn UI | Zod
+
+---
+
+## Goal
+
+My goal was to learn next.js features and next-auth
+
+## Key Features
+
+-   Image preview.
+
+-   Flexible drag and drop box.
+
+-   Authentication with traditional email-password and prviders like google and github.
+
+-   Interactive UI.
+
+## What I learned
+
+It was my first time building fullstack apps with **Next.js**.
+
+I practiced almost all aspects of next.js features like server components, server actions, middleware, the latest app router, built-in client side routing, Image and Font optimizations and the beast next-auth.
+
+I have also used my usual **Typescript** with **zod** for better code quality. I have also used **Resend** for email sending.
+
+## Project Images
+
+**Landing Page**
+
+This is the landing page for my web application. I added some cool scroll animaions.
+
+![Landing Page](./public/readme/landing.png "Landing Page")
+
+---
 
 ## Getting Started
 
-First, run the development server:
+Installation:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone git@github.com:iamsuudi/file-uploader.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Install Dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Set Up Environment Variables:
 
-## Learn More
+Create .env file at the root folder.
+1. Create github and google auth app and get their keys for authentication.
+2. Create Resend account and get your api key
 
-To learn more about Next.js, take a look at the following resources:
+```js
+DATABASE_URL=******
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+AUTH_SECRET=******
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+GITHUB_CLIENT_ID=******
+GITHUB_CLIENT_SECRET=******
 
-## Deploy on Vercel
+GOOGLE_CLIENT_ID=******
+GOOGLE_CLIENT_SECRET=******
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+RESEND_API_KEY=******
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+NEXTJS_PUBLIC_URL=******
+```
+
+Running Dev Server:
+
+```bash
+pnpm dev
+```
+
+Running Prod Server:
+
+```bash
+pnpm build
+pnpm start
+```

@@ -7,12 +7,14 @@ export default function Footer() {
 			<p className="text-xs">@2024 Dalo Drive</p>
 			<ul className="flex gap-3">
 				<li>
-					<Link href={"https://github.com/iamsuudi/dalo-drive"}>
+					<Link href={"https://github.com/iamsuudi/file-uploader"}>
 						<GitHubLogoIcon />
 					</Link>
 				</li>
 				<li>
-					<LinkedInLogoIcon />
+					<Link href={"https://linkedin.com/in/iamsuudi"}>
+						<LinkedInLogoIcon />
+					</Link>
 				</li>
 			</ul>
 		</footer>
